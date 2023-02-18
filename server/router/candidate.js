@@ -11,22 +11,23 @@ CandidateRouter.route("/")
     fs.readFile("./assets/candidate_db.json", (error, data) => {
       if (error) throw error;
       let candidate = JSON.parse(data);
-      let getdata = req.query.q?JSON.parse(req.query.q):'';
-      let searchField = req.query.q?getdata.key:'';
-      let searchVal = req.query.q?getdata.val:'';
-      let user=[];
-      if(searchField){
-        for(let i = 0; i<candidate.length; i++){
-          if(searchVal === candidate[i][searchField]){
-            user.push(candidate[i])
+      let getdata = req.query.q ? JSON.parse(req.query.q) : "";
+      let searchField = req.query.q ? getdata.key : "";
+      let searchVal = req.query.q ? getdata.val : "";
+      let user = [];
+      if (searchField) {
+        for (let i = 0; i < candidate.length; i++) {
+          
+          if (searchVal === candidate[i][searchField]) {
+            console.log(candidate[i].assign);
+
+            user.push(candidate[i]);
           }
         }
         res.json({ result: user });
-       }
-       else{
+      } else {
         res.json({ result: candidate });
-       }
-      
+      }
     });
   })
   .post((req, res, next) => {
@@ -54,27 +55,24 @@ CandidateRouter.route("/")
       let candidate = JSON.parse(data);
       let body = req.body;
       // let candId = body.candId;
-      let assign = body.assign?body.assign:"";
-      
+      let assign = body.assign ? body.assign : "";
+
       let getdata = JSON.parse(req.query.q);
       let searchField = getdata.key;
       let searchVal = getdata.val;
-      let msg='';
+      let msg = "";
 
       for (let i = 0; i < candidate.length; i++) {
         if (candidate[i][searchField] === searchVal) {
-           if (Object.keys(body).length === 1) {
-                  candidate[i].assign = assign;
-                  msg="Successfully Asigned";
-                }
-                else{
-                  candidate[i] = body;
-                  msg="Successfully Updated";
-                }
-         
+          if (Object.keys(body).length === 1) {
+            candidate[i].assign = assign;
+            msg = "Successfully Asigned";
+          } else {
+            candidate[i] = body;
+            msg = "Successfully Updated";
+          }
         }
       }
-
 
       fs.writeFile(
         "./assets/candidate_db.json",
