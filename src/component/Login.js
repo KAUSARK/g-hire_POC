@@ -47,36 +47,42 @@ export default function Login(props) {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      let userCred={
-        userid:values.userid,
-        pwd:values.password,
-        role:value
-       
+      let userCred = {
+        userid: values.userid,
+        pwd: values.password,
+        role: value,
       };
       async function loginUser(credentials) {
-    let url = `http://localhost:8080/login/${JSON.stringify(credentials)}`;
-    let response = await fetch(url);
-    let data = await response.json();
-
-    if (Object.keys(data).length > 0) {
-      window.sessionStorage.setItem("role", value === 1 ? "Portal User" : "HR");
-      window.sessionStorage.setItem("userId", values.userid);
-      navigate("/dashboard");
-    } else {
-      setloginError("*wrong userid or pwd");
+        let url = `http://localhost:4200/api/auth/login`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(credentials),
+        });
+        let data = await response.json();
       
-    }
-  }
-      loginUser(userCred);
 
+        if (data.status > 0) {
+          window.sessionStorage.setItem(
+            "role",
+            value === 1 ? "Portal User" : "HR"
+          );
+          window.sessionStorage.setItem("userId", values.userid);
+          navigate("/dashboard");
+        } else {
+          setloginError("*wrong userid or pwd");
+        }
+      }
+      loginUser(userCred);
     },
   });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    setloginError('');
+    setloginError("");
   };
-  
 
   const tabs = [
     {
@@ -89,7 +95,7 @@ export default function Login(props) {
           placeholder="employee id"
           fullWidth
           key="1"
-          error={Boolean(formik.touched.userid && formik.errors.userid) }
+          error={Boolean(formik.touched.userid && formik.errors.userid)}
           helperText={formik.touched.userid && formik.errors.userid}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -204,7 +210,11 @@ export default function Login(props) {
               {Component}
             </TabPanel>
           ))}
-        {loginError? <span className={styles.errMsg}>{loginError}</span>:''}
+          {loginError ? (
+            <span className={styles.errMsg}>{loginError}</span>
+          ) : (
+            ""
+          )}
           <div className={styles.btnanimate}>
             <button className={styles.btnsignin} type="submit">
               Login to your account

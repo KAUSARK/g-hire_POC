@@ -131,6 +131,15 @@ const ApplicantCreateForm = () => {
       axios.post(upldUrl, upLdData, config).then((response) => {
         console.log(response.data);
       });
+
+      async function chkBlkCand(){
+        let email = values["email"];
+        let mobile =  values["mobile"];
+        let url = "http://localhost:8080/candidate";
+        let response = await fetch(url);
+        let data = await response.json();
+      }
+
       async function postData() {
         let url = "http://localhost:8080/candidate";
         let obj = {
@@ -207,6 +216,8 @@ const ApplicantCreateForm = () => {
           console.log(setmsg);
         }
       }
+      
+
       postData();
       window.location.reload();
     },
